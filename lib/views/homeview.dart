@@ -14,6 +14,10 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     notificationService.requestNotificationPermission();
+    notificationService.getDeviceToken().then((value) {
+      print("device token: ");
+      print(value);
+    });
   }
 
   Widget build(BuildContext context) {
