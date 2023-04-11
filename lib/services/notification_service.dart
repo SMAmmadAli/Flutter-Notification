@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -22,10 +23,24 @@ class NotificationService {
     }
   }
 
+  void firebaseInit() {
+    FirebaseMessaging.onMessage.listen((message) {
+      print(message.notification!.title.toString());
+      print(message.notification!.body.toString());
+    });
+  }
+
   //FCM Token or Device Token
 
-  Future<String> getDeviceToken() async {
+  Future getDeviceToken() async {
     String? token = await messaging.getToken();
     return token!;
+  }
+
+  void tokenIsRefresh() async {
+    messaging.onTokenRefresh.listen((event) {
+      event.toString();
+      print('refresh');
+    });
   }
 }
