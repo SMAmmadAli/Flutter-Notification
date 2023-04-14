@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:push_notification/views/homeview.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -8,7 +9,16 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundMessageHandler);
   runApp(const MyApp());
+}
+
+//For background notification
+
+@pragma('vm:entry-point')
+Future<void> _firebaseBackgroundMessageHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print(message.notification!.title.toString());
 }
 
 class MyApp extends StatelessWidget {

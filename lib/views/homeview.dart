@@ -14,7 +14,7 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     notificationService.requestNotificationPermission();
-    notificationService.firebaseInit();
+    notificationService.firebaseInit(context);
     notificationService.getDeviceToken().then((value) {
       print("device token: ");
       print(value);
