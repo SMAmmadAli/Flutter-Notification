@@ -111,6 +111,23 @@ class NotificationService {
     });
   }
 
+  // when screen is terminated so show the notification
+  Future<void> setupInteractMessage(BuildContext context) async {
+    // when app is terminated
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+
+    if (initialMessage != null) {
+      handleMessage(context, initialMessage);
+    }
+
+    //when app is background
+    FirebaseMessaging.onMessageOpenedApp.listen((event) {
+      handleMessage(context, event);
+    });
+  }
+
+  //pressed the notification and navigate to that screen
   void handleMessage(BuildContext context, RemoteMessage message) {
     if (message.data['type'] == 'msj') {
       Navigator.push(
