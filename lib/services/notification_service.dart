@@ -1,9 +1,13 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+import '../views/message_screen.dart';
 
 class NotificationService {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -20,7 +24,9 @@ class NotificationService {
         android: androidInitializationSettings, iOS: iosInitializationSettings);
 
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onDidReceiveBackgroundNotificationResponse: (payload) {});
+        onDidReceiveBackgroundNotificationResponse: (payload) {
+      handleMessage(context, message);
+    });
   }
 
   //take user permission to show notification
@@ -44,13 +50,18 @@ class NotificationService {
     }
   }
 
-  void firebaseInit() {
+  void firebaseInit(BuildContext context) {
     FirebaseMessaging.onMessage.listen((message) {
       if (kDebugMode) {
         print(message.notification!.title.toString());
         print(message.notification!.body.toString());
+        print(message.data.toString());
       }
-      showNotification(message);
+      if (Platform.isAndroid) {
+        initLocalNotification(context, message);
+      } else {
+        showNotification(message);
+      }
     });
   }
 
@@ -98,5 +109,16 @@ class NotificationService {
       event.toString();
       print('refresh');
     });
+  }
+
+  void handleMessage(BuildContext context, RemoteMessage message) {
+    if (message.data['type'] == 'msj') {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => MessageScreen(
+                    id: message.data['id'],
+                  )));
+    }
   }
 }
